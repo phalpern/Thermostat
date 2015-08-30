@@ -3,8 +3,7 @@
 #ifndef INCLUDED_TEMP_SENSOR_DOT_H
 #define INCLUDED_TEMP_SENSOR_DOT_H
 
-/// @brief TempScale is used to select whether to read temp in C or F
-enum TempScale { Celcius, Farenheight };
+#include "globals.h"
 
 /// @brief DHT11 or DHT22 temperature and humidity sensor
 class TempSensor
@@ -17,7 +16,7 @@ class TempSensor
   public:
     TempSensor(int port);
 
-    float getTemperature(TempScale scale);
+    float getTemperature(TempScale scale = g_temp_scale);
     float getRelHumidity();
 };
 
