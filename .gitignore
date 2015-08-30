@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.bin
 
 # Precompiled Headers
 *.gch
@@ -26,3 +27,7 @@
 *.exe
 *.out
 *.app
+
+# Backup files
+*~
+*.bak
