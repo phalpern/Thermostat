@@ -24,7 +24,7 @@ class TempSensor
     byte readByteFromSensor() const;
 
   public:
-    TempSensor(int port = -1) : m_port(port) { }
+    explicit TempSensor(int port = -1);
     
     void initialize(int port);
 

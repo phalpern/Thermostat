@@ -6,7 +6,7 @@
 const unsigned minTimeBetweenReadingsMs = 2000;
 
 TempSensor::TempSensor(int port)
-    : m_port(port), m_lastCheckedMs(-1)
+    : m_port(port)
 {
     if (port > 0)
         initialize(port);
@@ -21,7 +21,7 @@ void TempSensor::initialize(int port)
     digitalWrite(m_port, HIGH); 
 }
 
-float TempSensor::getTemperature(TempScale scale = Celcius)
+float TempSensor::getTemperature(TempScale scale)
 {
     readTempAndHumidity();
     if (scale == Fahrenheit)
@@ -121,8 +121,9 @@ byte TempSensor::readByteFromSensor() const
         // Start of high pulse.  If high pulse is over 30us, then this
         // represents a high bit; otherwise, it represents a low bit.
         delayMicroseconds(30); 
+        result <<= 1;
         if (digitalRead(m_port) == HIGH) 
-            result |= (1 << bit);  // Over 30us: high bit
+            result |= 1;  // Over 30us: high bit
         // Else low bit, nothing is added to the result
 
         // Wait for pin to go low again
