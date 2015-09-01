@@ -3,7 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
+#if 0
 #include "Arduino.h"
+#else
+#include <application.h>
+#endif
 
 /*
 // Communication set up command
@@ -48,6 +52,7 @@ void DigoleSerialDisp::preprint(void) {
 }
 
 /*----------Functions for Graphic LCD/OLED adapters only---------*/
+#define pgm_read_byte_near(p) (*(uint8_t*)(p))
 void DigoleSerialDisp::drawBitmap(unsigned int x, unsigned int y, unsigned int w, unsigned int h, const uint8_t *bitmap) {
     uint8_t i = 0;
     if ((w & 7) != 0)

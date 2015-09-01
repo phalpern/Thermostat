@@ -5,13 +5,19 @@
 
 #ifndef INCLUDED_THERMOSTAT_CORE_DOT_H
 #define INCLUDED_THERMOSTAT_CORE_DOT_H
+#include <application.h>
 
 /// @brief Decide whether to demand heat or cool.
 class ThermostatCore
 {
-    int m_heatRelay;
-    int m_coolRelay;
-
+    int          m_heatRelayPort;
+    int          m_coolRelayPort;
+	float        m_lowerTempC;
+	float        m_upperTempC;
+	bool         m_heatIsOn;
+	bool         m_coolIsOn;
+	uint32_t     m_timeOfLastChangeMs;
+	
   public:
     // TBD: Constructor goes here
     
@@ -21,6 +27,6 @@ class ThermostatCore
     void setTargets(float lowerTempC, float upperTempC);
 
     void runThermostat(float currentTempC);
-}
+};
 
 #endif // ! defined(INCLUDED_THERMOSTAT_CORE_DOT_H)
