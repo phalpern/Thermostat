@@ -2,10 +2,15 @@
 #ifndef DigoleSerialDisp_h
 #define DigoleSerialDisp_h
 
+#if 0 // Real Arduino would use these
 #include <inttypes.h>
 #include "Print.h"
 #include "../Wire/Wire.h"
 #include "Arduino.h"
+#else // But Photon uses this
+#include <application.h>
+typedef decltype(Serial1) HardwareSerial;
+#endif
 
 // Communication set up command
 // Text function command
@@ -166,11 +171,13 @@ public:
     }
     //print function
 
+#if 0
     size_t println(const __FlashStringHelper *v) {
         preprint();
         Print::println(v);
         Print::print("\x0dTRT");
     }
+#endif
 
     size_t println(const String &v) {
         preprint();
@@ -236,10 +243,12 @@ public:
         Print::println("\x0dTRT");
     }
 
+#if 0
     size_t print(const __FlashStringHelper *v) {
         preprint();
         Print::println(v);
     }
+#endif
 
     size_t print(const String &v) {
         preprint();
