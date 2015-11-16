@@ -4,11 +4,11 @@
 
 There are three projects that comprise the thermostat software:
 
-1 The embedded software that runs on the Photon micro-controller.
-2 A mobile app that runs on iOS or Android devices and which allows the
-  thermostat to be controlled remotely.
-3 (Optional) A web-accessible app that also allows the thermostat to be
-  controlled remotely.
+1. The embedded software that runs on the Photon micro-controller.
+2. A mobile app that runs on iOS or Android devices and which allows the
+   thermostat to be controlled remotely.
+3. (Optional) A web-accessible app that also allows the thermostat to be
+   controlled remotely.
 
 We may combine projects 2 and 3, i.e., create a web app that can be accessed
 from a mobile phone.  The current plan is to give the thermostat a simple
