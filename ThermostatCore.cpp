@@ -1,6 +1,6 @@
-// thermostat_core.cpp                  -*-C++-*-
+// ThermostatCore.cpp                  -*-C++-*-
 
-#include "thermostat_core.h"
+#include "ThermostatCore.h"
 
 /* tempFuzz is the amount in degrees C the over/under the lower/upper temp bounds that the thermostat allows
  * the temperature in the house to go before it turns on/off the heat/airconditioning
@@ -80,4 +80,4 @@ void ThermostatCore::runThermostat(float currentTempC)
 
 }
 
-/* End thermostat_core.cpp */
+/* End ThermostatCore.cpp */

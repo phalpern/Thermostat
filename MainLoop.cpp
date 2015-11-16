@@ -2,8 +2,8 @@
 //
 /// @file Setup and main loop for smart thermostat
 
-#include "globals.h"
-#include "temp_sensor.h"
+#include "Settings.h"
+#include "TempSensor.h"
 
 const int tempSensorPort = D0;
 const int heatRelayPort = D1;

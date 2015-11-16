@@ -1,9 +1,7 @@
-/* temp_sensor.h                  -*-C++-*- */
+/* TempSensor.h                  -*-C++-*- */
 
-#ifndef INCLUDED_TEMP_SENSOR_DOT_H
-#define INCLUDED_TEMP_SENSOR_DOT_H
-
-#include "globals.h"
+#ifndef INCLUDED_TEMPSENSOR_DOT_H
+#define INCLUDED_TEMPSENSOR_DOT_H
 
 /// @brief DHT11 or DHT22 temperature and humidity sensor
 class TempSensor
@@ -28,10 +26,10 @@ class TempSensor
     
     void initialize(int port);
 
-    float getTemperature(TempScale scale = Celcius);
-    float getRelHumidity();
+    float getTemperatureC();  ///< Temperature in degrees C
+    float getRelHumidity();   ///< Relative humidity in percent
 
     static float cToF(float tempC);
 };
 
-#endif // ! defined(INCLUDED_TEMP_SENSOR_DOT_H)
+#endif // ! defined(INCLUDED_TEMPSENSOR_DOT_H)

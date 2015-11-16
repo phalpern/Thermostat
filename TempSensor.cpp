@@ -1,6 +1,6 @@
-/* temp_sensor.cpp                  -*-C++-*- */
+/* TempSensor.cpp                  -*-C++-*- */
 
-#include "temp_sensor.h"
+#include "TempSensor.h"
 
 // Wait at least 2 seconds (2000ms) between physical reads of the sensor.
 const unsigned minTimeBetweenReadingsMs = 2000;
@@ -21,13 +21,10 @@ void TempSensor::initialize(int port)
     digitalWrite(m_port, HIGH); 
 }
 
-float TempSensor::getTemperature(TempScale scale)
+float TempSensor::getTemperatureC()
 {
     readTempAndHumidity();
-    if (scale == Fahrenheit)
-        return cToF(m_temperatureC);
-    else
-        return m_temperatureC;
+    return m_temperatureC;
 }
 
 float TempSensor::getRelHumidity()
@@ -134,4 +131,4 @@ byte TempSensor::readByteFromSensor() const
     return result; 
 }
 
-/* End temp_sensor.cpp */
+/* End TempSensor.cpp */

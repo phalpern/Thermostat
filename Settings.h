@@ -1,7 +1,7 @@
-/* globals.h                  -*-C++-*- */
+/* Settings.h                  -*-C++-*- */
 
-#ifndef INCLUDED_GLOBALS_DOT_H
-#define INCLUDED_GLOBALS_DOT_H
+#ifndef INCLUDED_SETTINGS_DOT_H
+#define INCLUDED_SETTINGS_DOT_H
 
 #include <application.h>  // Arduino functions and macros
 
@@ -12,4 +12,4 @@ extern TempScale g_tempScale;
 extern float g_currentTempCF; //current temperature represented in the current temp scale (C or F)
 
 
-#endif // ! defined(INCLUDED_GLOBALS_DOT_H)
+#endif // ! defined(INCLUDED_SETTINGS_DOT_H)

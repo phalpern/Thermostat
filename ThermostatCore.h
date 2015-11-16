@@ -1,10 +1,10 @@
-// thermostat_core.h                  -*-C++-*- 
+// ThermostatCore.h                  -*-C++-*- 
 //
 /// Look at the current temperature and decide whether to demand heat or cool.
 
 
-#ifndef INCLUDED_THERMOSTAT_CORE_DOT_H
-#define INCLUDED_THERMOSTAT_CORE_DOT_H
+#ifndef INCLUDED_THERMOSTATCORE_DOT_H
+#define INCLUDED_THERMOSTATCORE_DOT_H
 #include <application.h>
 
 /// @brief Decide whether to demand heat or cool.
@@ -29,4 +29,4 @@ class ThermostatCore
     void runThermostat(float currentTempC);
 };
 
-#endif // ! defined(INCLUDED_THERMOSTAT_CORE_DOT_H)
+#endif // ! defined(INCLUDED_THERMOSTATCORE_DOT_H)
