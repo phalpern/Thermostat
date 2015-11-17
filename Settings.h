@@ -6,10 +6,23 @@
 #include <application.h>  // Arduino functions and macros
 
 /// @brief TempScale is used to select whether to read temp in C or F
-enum TempScale { Celcius, Fahrenheit };
+enum TempScale_t { Celcius, Fahrenheit };
 
-extern TempScale g_tempScale;
-extern float g_currentTempCF; //current temperature represented in the current temp scale (C or F)
+/// @brief State of the HVAC system (what is actually happening in basement)
+enum HvacState_t { HvacOff, HvacHeat, HvacCool, HvacFan };
 
+/// @brief Operation mode of the thermostat
+enum Mode_t { ModeOff, ModeNormal, ModeOverride, ModeBoost, ModeAway };
+
+struct Settings
+/// @brief Temperature and mode settings affecting entire thermostat
+{
+    TempScale_t m_tempScale;
+    float       m_tempTargetLow;
+    float       m_tempTargetHigh;
+    float       m_boostLow;
+    float       m_boostHigh;
+    HvacState_t m_hvacState;
+};
 
 #endif // ! defined(INCLUDED_SETTINGS_DOT_H)
