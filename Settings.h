@@ -4,7 +4,7 @@
 #define INCLUDED_SETTINGS_DOT_H
 
 /// @brief TempScale is used to select whether to read temp in C or F
-enum TempScale_t { Celcius, Fahrenheit };
+enum TempUnits_t { Celcius, Fahrenheit };
 
 /// @brief State of the HVAC system (what is actually happening in basement)
 enum HvacState_t { HvacOff, HvacHeat, HvacCool, HvacFan };
@@ -15,7 +15,7 @@ enum Mode_t { ModeOff, ModeNormal, ModeOverride, ModeBoost, ModeAway };
 /// @brief Temperature and mode settings affecting entire thermostat
 struct Settings
 {
-    TempScale_t m_tempScale;
+    TempUnits_t m_tempUnits;
     float       m_tempTargetLow;
     float       m_tempTargetHigh;
     float       m_boostLow;
@@ -24,9 +24,19 @@ struct Settings
 
     /// @brief Initialize to default settings
     void init();  
+
+    /// @brief  Convert a temperature to the current temperature scale
+    /// @param  Temperature in normalized form (degrees C)
+    /// @return Temperature in either F or C, depending on m_tempUnits.
+    float tempToCurrentUnits(float normalizedTemp) const;
+
+    /// @brief  Convert a temperature to normalized form (degrees C)
+    /// @param  Temperature in either F or C, depending on m_tempUnits.
+    /// @return Temperature in normalized form (degrees C)
+    float tempToNormalForm(float normalizedTemp) const;
 };
 
-extern Settings theCurrentSettings;
-extern Settings theLastSettings;
+extern Settings theCurrentSettings;  ///< Current settings
+extern Settings theLastSettings;     ///< Settings last time through main loop
 
 #endif // ! defined(INCLUDED_SETTINGS_DOT_H)
