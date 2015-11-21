@@ -2,6 +2,10 @@
 
 #include "TempSensor.h"
 
+#include <application.h>  // Arduino interface constants and functions
+
+TempSensor theTempSensor;
+
 // Wait at least 2 seconds (2000ms) between physical reads of the sensor.
 const unsigned minTimeBetweenReadingsMs = 2000;
 
@@ -21,7 +25,7 @@ void TempSensor::initialize(int port)
     digitalWrite(m_port, HIGH); 
 }
 
-float TempSensor::getTemperatureC()
+float TempSensor::getTemperature()
 {
     readTempAndHumidity();
     return m_temperatureC;
@@ -31,11 +35,6 @@ float TempSensor::getRelHumidity()
 {
     readTempAndHumidity();
     return m_relHumidity;
-}
-
-float TempSensor::cToF(float tempC)
-{
-    return tempC * 9 / 5 + 32;
 }
 
 void TempSensor::readTempAndHumidity()

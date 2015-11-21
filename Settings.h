@@ -15,20 +15,22 @@ enum Mode_t { ModeOff, ModeNormal, ModeOverride, ModeBoost, ModeAway };
 /// @brief Temperature and mode settings affecting entire thermostat
 struct Settings
 {
-    TempUnits_t m_tempUnits;
-    float       m_tempTargetLow;
-    float       m_tempTargetHigh;
-    float       m_boostLow;
-    float       m_boostHigh;
-    HvacState_t m_hvacState;
+    TempUnits_t m_tempUnits;      ///< Celsius or Fahrenheit
+    float       m_tempPrecision;  ///< Human-readable precision for temperature
+    float       m_tempTargetLow;  ///< Temperature threshold for heat
+    float       m_tempTargetHigh; ///< Temperature threshold for cooling
+    float       m_boostLow;       ///< Temporary temperature threshold for heat
+    float       m_boostHigh;      ///< Temporary temperature threshold for cool
+    HvacState_t m_hvacState;      ///< Current state of heat/cool hardware
 
     /// @brief Initialize to default settings
-    void init();  
+    void initialize();  
 
     /// @brief  Convert a temperature to the current temperature scale
     /// @param  normalizedTemp Temperature in normalized form (degrees C)
+    /// @param  round          true if results should be rounded for humans
     /// @return Temperature in either F or C, depending on m_tempUnits.
-    float tempToCurrentUnits(float normalizedTemp) const;
+    float tempToCurrentUnitsFC(float normalizedTemp, bool round = true) const;
 
     /// @brief  Convert a temperature to normalized form (degrees C)
     /// @param  tempFC Temperature in either F or C, depending on m_tempUnits.
@@ -36,7 +38,14 @@ struct Settings
     float tempToNormalForm(float tempFC) const;
 };
 
-extern Settings theCurrentSettings;  ///< Current settings
-extern Settings theLastSettings;     ///< Settings last time through main loop
+/// @brief Current settings
+/// The current settings must be initialized before any other module.
+extern Settings theCurrentSettings;
+
+/// @brief Settings last time through main loop
+/// This variable holds the settings that were in effect the previous time
+/// through the main loop. A function can compare individual settings between
+/// `theCurrentSettings` and `theLastSettings` to see if anything has changed.
+extern Settings theLastSettings;
 
 #endif // ! defined(INCLUDED_SETTINGS_DOT_H)

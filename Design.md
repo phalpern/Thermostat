@@ -62,7 +62,7 @@ last time `run` was called. The display module, for example, can see whether
 or not the temperature setting was changed (by the user input module), and
 update the display accordingly.
 
-### List of components
+### List of software components
 
 Below is an initial listing of the components in the thermostat software. Each
 component is either *ACTIVE* or *PASSIVE* and also has a main class name that
@@ -73,7 +73,7 @@ is used in the actual C++ code.
   * Keeps track of the previous value of settings.
 * Temperature sensing module, `TempSensor` (*PASSIVE*)
   * Reads temperature (and humidity) sensor and reports current values
-* Furnace Control module, `FurnaceControl`  (*PASSIVE*)
+* HVAC Control module, `HvacControl`  (*PASSIVE*)
   * Turn heat on/off
   * Turn A/C on/off
   * Turn fan on/off
@@ -112,3 +112,36 @@ is used in the actual C++ code.
   * Dispatch to appropriate module
 * Logger, `Logger` (*ACTIVE*)
   * Send data to internet
+
+## Temperature representation
+
+### Temperature units and scale
+
+Temperature is stored in variables of type `float`, which have enough range
+to store any reasonable household temperature to a precision of 0.5 degrees F.
+Logically, there are at least three units that can be used to store the
+temperature: Celsius, Fahrenheit, or some sort of normalized unit for internal
+use. Because of the way our temperature sensor works, the normalized unit is
+identical to Celsius. (We considered using Kelvin as the normalized scale, but
+we were concerned that the larger numbers might have reduced precision.)
+
+In practice, we need variables to store temperature in one of two forms:
+normalized or human-readable.  The normalized form, as we said, is the same as
+Celcius. The human-readable form is either Celsius or Fahrenheit, depending on
+the current setting for the Thermostat.  In order to avoid confusion within
+the code, we use a Hungarian-notation suffix of `FC` (for Fahrenheit/Celsius)
+for the human-readable temperatures. Any temperature function or variable
+without the `FC` suffix represents a normalized temperature.  The `Settings`
+module contains functions for converting between normalized units and the
+current temperature (human-readable) units.
+
+### Temperature rounding
+
+When displaying temperatures to the user, we want to round the numbers in a
+reasonable way both to avoid showing unreasonable precision and to avoid the
+effects of round-off error in the floating-point-to-string conversion.  The
+`Settings` module contains a precision field that tells the display module how
+to display temperatures. Reasonable values are 0.5 or 1.0 for Fahrenheit
+and 0.2 or 0.5 for Celsius.  The `Settings` function for converting a
+normalized temperature to current units lets you choose whether to round the
+result to the currently-set precision or not (defaults to yes).

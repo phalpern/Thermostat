@@ -11,14 +11,13 @@ class TempSensor
     float       m_relHumidity;   // Last read relative humidity in percent
     float       m_temperatureC;  // Last read temperature in degrees C
 
-    void readTempAndHumidity();
-
     /// @brief Physically read the sensor.
     /// @return 0 on success, non-zero on error
     /// Reads the DHT sensor and stores the temperature and humidity
     /// in `m_temperatureC` and `m_relHumidity`.
     int readSensor();
 
+    void readTempAndHumidity();
     byte readByteFromSensor() const;
 
   public:
@@ -26,10 +25,10 @@ class TempSensor
     
     void initialize(int port);
 
-    float getTemperatureC();  ///< Temperature in degrees C
+    float getTemperature();   ///< Temperature in normalized form (degrees C)
     float getRelHumidity();   ///< Relative humidity in percent
-
-    static float cToF(float tempC);
 };
+
+extern TempSensor theTempSensor;  ///< Global temperature sensor
 
 #endif // ! defined(INCLUDED_TEMPSENSOR_DOT_H)
