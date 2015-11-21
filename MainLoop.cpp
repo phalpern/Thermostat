@@ -5,49 +5,48 @@
 #include "Settings.h"
 #include "TempSensor.h"
 
+#include <application.h>  // Arduino interface constants and functions
+
 const int tempSensorPort = D0;
-const int heatRelayPort = D1;
-const int coolRelayPort = D2;
-const int fanRelayPort = D3;
+const int heatRelayPort  = D1;
+const int coolRelayPort  = D2;
+const int fanRelayPort   = D3;
 
-TempSensor theTempSensor;
-ThermostatCore theThermostatCore;
-
+/// @brief initialize the hardware and software modules
 void setup()
 {
+    theCurrentSettings.initialize();
+    theLastSettings = theCurrentSettings;
     theTempSensor.initialize(tempSensorPort);
-    // theThermostatCore.initialize(heatRelayPort, coolRelayPort, fanRelayPort);
+    // theHvacControl.initialize(heatRelayPort, coolRelayPort, fanRelayPort);
+    // theThermostatCore.initialize();
+    // theDisplay.initialize();
+    // theUserInput.initialize();
+    // theSchedule.initialize();
+    // theBoostManager.initialize();
+    // theInternetCommands.initialize();
+    // theLogger.initialize();
 }
 
-// @brief calculate the target thermostat temperatures
-// @inputs g_lowerTempSetC, g_upperTempSetC, g_lowerTempBoostC,
-// g_upperTempBoostC
-// @outputs g_lowerTempTargetC, g_upperTempTargetC
-// Computes the target temperature range based on the schedule, manual
-// settings, and boost settings.  Boost settings take precidence, followed by
-// the normal global settings.  The global settings are set by the
-// stored schedule but can be overridden manually or by the home/not home
-// detection system.
-void calcTargetTemp()
-{
-    static const float 
-
-    if (g_lowerTempBoostC > 0.0)
-    {
-        g_lowerTempTargetC = g_lowerTempBoostC;
-    }
-}
-
+/// @brief main loop called from the Photon OS
+/// This function is called repeatedly, approximately once per milisecond,
+/// from the Photo OS. Between calls to this function, the OS handles its WiFi
+/// connection and other house keeping.  If this loop takes to long to
+/// execute, the OS will drop the WiFi connection.  It is therefore important
+/// to keep the amount of work minimal in each execution of the loop.  If
+/// heavier processing is needed, the code should directly call the OS every
+/// once in a while, or else call `delay`, which also gives the OS an
+/// opportunity to do its processing.
 void loop()
 {
-    float currentTempC = theTempSensor.getTemperature();
-    g_currentTempCF = theTempSensor.getTemperature(g_tempScale);
-    g_currentHumidity = theTempSensor.getRelHumidity();
-
-    float lowerTargetTempC, upperTargetTempC;
-    calcTargetTemps(&lowerTargetTempC, &upperTargetTempC);
-    theThermostatCore.setTargets(lowerTargetTempC, upperTargetTempC);
-    theThermostatCore.runThermostat(currentTempC);
+    theLastSettings = theCurrentSettings;
+    // theThermostatCore.run();
+    // theDisplay.run();
+    // theUserInput.run();
+    // theSchedule.run();
+    // theBoostManager.run();
+    // theInternetCommands.run();
+    // theLogger.run();
 }
 
 // End main.cpp
