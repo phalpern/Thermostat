@@ -26,14 +26,14 @@ struct Settings
     void init();  
 
     /// @brief  Convert a temperature to the current temperature scale
-    /// @param  Temperature in normalized form (degrees C)
+    /// @param  normalizedTemp Temperature in normalized form (degrees C)
     /// @return Temperature in either F or C, depending on m_tempUnits.
     float tempToCurrentUnits(float normalizedTemp) const;
 
     /// @brief  Convert a temperature to normalized form (degrees C)
-    /// @param  Temperature in either F or C, depending on m_tempUnits.
+    /// @param  tempFC Temperature in either F or C, depending on m_tempUnits.
     /// @return Temperature in normalized form (degrees C)
-    float tempToNormalForm(float normalizedTemp) const;
+    float tempToNormalForm(float tempFC) const;
 };
 
 extern Settings theCurrentSettings;  ///< Current settings
