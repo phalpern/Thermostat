@@ -6,6 +6,9 @@
 /// @brief DHT11 or DHT22 temperature and humidity sensor
 class TempSensor
 {
+    typedef unsigned      uint32_t;
+    typedef unsigned char byte;
+
     int         m_port;          // Digital port used to communicate w/ sensor
     uint32_t    m_lastReadMs;    // Last time sensor was physically read (ms)
     float       m_relHumidity;   // Last read relative humidity in percent

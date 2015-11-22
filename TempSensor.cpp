@@ -4,6 +4,11 @@
 
 #include <application.h>  // Arduino interface constants and functions
 
+// Choose between DHT22 and DHT11 temperature & humidity sensor
+#define DHT22 22  // DHT22 is the higher-accuracy sensor (16-bit measurements)
+#define DHT11 11  // DHT11 is the lower-accuracy sensor (8-bit measurements)
+#define DHT_MODEL 22
+
 TempSensor theTempSensor;
 
 // Wait at least 2 seconds (2000ms) between physical reads of the sensor.
@@ -19,10 +24,11 @@ TempSensor::TempSensor(int port)
 void TempSensor::initialize(int port)
 {
     m_port = port;
-    m_lastReadMs = millis() - minTimeBetweenReadingsMs;
+    m_lastReadMs = 0;         // Read temperature ASAP
+    m_relHumidity = 0;
+    m_temperatureC = 21.0;    // Reasonable temperature, just in case
 
-    pinMode(m_port, OUTPUT); 
-    digitalWrite(m_port, HIGH); 
+    pinMode(m_port, INPUT_PULLUP); 
 }
 
 float TempSensor::getTemperature()
@@ -42,6 +48,13 @@ void TempSensor::readTempAndHumidity()
     // Don't read the temperature sensor too often -- it will return
     // bad results and/or damage the sensor
     uint32_t currentTimeMs = millis();
+    if (currentTimeMs < minTimeBetweenReadingsMs)
+    {
+        // Reading temperature too soon. Wait for minimum time to elapse.
+        delay(minTimeBetweenReadingsMs - currentTimeMs);
+        currentTimeMs = millis();
+    }
+    
     if (currentTimeMs < m_lastReadMs) 
         m_lastReadMs = 0;  // Timer has wrapped around
 
@@ -52,12 +65,8 @@ void TempSensor::readTempAndHumidity()
     // again.
     m_lastReadMs = currentTimeMs;
     
-    if (readSensor() != 0)
-        delay(7);  // If error, pause before resetting the port.
-
     // Reset port
-    pinMode(m_port,OUTPUT); 
-    digitalWrite(m_port,HIGH); 
+    pinMode(m_port, INPUT_PULLUP); 
 }
 
 int TempSensor::readSensor()
@@ -65,14 +74,15 @@ int TempSensor::readSensor()
     // Bytes being read fron DHTxx sensor
     byte dhtBytes[4];
 
-    // Start protocol: Pull pin low for 20ms, then high for 40us,
-    // then set to INPUT mode and start listening.
+    // Start protocol: Temporarily set pin to OUTPUT mode and pull low for
+    // 20ms.
+    pinMode(m_port, OUTPUT); 
     digitalWrite(m_port, LOW); 
     delay(20); 
-    digitalWrite(m_port, HIGH); 
+    pinMode(m_port, INPUT_PULLUP); 
+
+    // Let float HIGH for 40us
     delayMicroseconds(40); 
-    pinMode(m_port, INPUT); 
-    //delayMicroseconds(40); 
 
     // Expect input to go low immediately for at MOST 80us, then high
     // for at LEAST 80us
@@ -95,10 +105,26 @@ int TempSensor::readSensor()
     if (readByteFromSensor() != checksum)
         return 3;  // ERROR.  Try again later
 
-    m_relHumidity  =  dhtBytes[0];       // Integral part of humidity
-    m_relHumidity  += dhtBytes[1] * 0.1; // Tenths of a percent humidity
-    m_temperatureC =  dhtBytes[2];       // Integral part of temperature C
-    m_temperatureC += dhtBytes[3] * 0.1; // Tenths degrees C
+#if DHT_MODEL == DHT11
+    m_relHumidity  =  dhtBytes[0];       // Humidity stored in single byte
+    m_temperatureC =  dhtBytes[2];       // Temperature stored in single byte
+#else // end else DHT22
+    unsigned short value16;
+
+    // Compute 16-bit humidity in tenths of a percent
+    value16 = (dhtBytes[0] << 8) + dhtBytes[1];
+    m_relHumidity = value16 * 0.1;
+
+    // Compute 16-bit temperature in tenths of a percent
+    value16 = (dhtBytes[2] << 8) + dhtBytes[3];
+    
+    // Temperature is in signed-magnitude format; if high bit is set
+    // value is negative.
+    if (value16 & 0x1000)
+        m_temperatureC = -(value16 & 0x7fff) * 0.1;
+    else
+        m_temperatureC = value16 * 0.1;
+#endif // end else DHT22
 
     return 0; // Success
 }
