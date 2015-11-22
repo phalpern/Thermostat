@@ -1,0 +1,20 @@
+#! /bin/bash
+
+# Op can be 'compile' or 'flash'. Default 'flash'
+op=${1:-flash}
+
+device=290023000f47343432313031  # Pablo's photon
+
+headers="Settings.h TempSensor.h"
+sources="MainLoop.cpp Settings.cpp TempSensor.cpp"
+
+set -x
+particle compile photon $sources $headers --saveTo Thermostat.bin
+err=$?
+if [ 0 != $err ]; then
+    exit $err;
+fi
+
+if [ "$op" = flash ]; then
+    particle flash $device Thermostat.bin
+fi
