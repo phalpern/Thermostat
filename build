@@ -5,8 +5,8 @@ op=${1:-flash}
 
 device=290023000f47343432313031  # Pablo's photon
 
-headers="Settings.h TempSensor.h"
-sources="MainLoop.cpp Settings.cpp TempSensor.cpp"
+headers="Settings.h TempSensor.h Display.h"
+sources="MainLoop.cpp Settings.cpp TempSensor.cpp Display.cpp"
 
 set -x
 particle compile photon $sources $headers --saveTo Thermostat.bin

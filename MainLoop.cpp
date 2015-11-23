@@ -4,13 +4,14 @@
 
 #include "Settings.h"
 #include "TempSensor.h"
+#include "Display.h"
 
 #include <application.h>  // Arduino interface constants and functions
 
-const int tempSensorPort = D0;
-const int heatRelayPort  = D1;
-const int coolRelayPort  = D2;
-const int fanRelayPort   = D3;
+const int tempSensorPort = D1;
+const int heatRelayPort  = D2;
+const int coolRelayPort  = D3;
+const int fanRelayPort   = D4;
 
 /// @brief initialize the hardware and software modules
 void setup()
@@ -20,7 +21,7 @@ void setup()
     theTempSensor.initialize(tempSensorPort);
     // theHvacControl.initialize(heatRelayPort, coolRelayPort, fanRelayPort);
     // theThermostatCore.initialize();
-    // theDisplay.initialize();
+    theDisplay.initialize();
     // theUserInput.initialize();
     // theSchedule.initialize();
     // theBoostManager.initialize();
@@ -41,7 +42,7 @@ void loop()
 {
     theLastSettings = theCurrentSettings;
     // theThermostatCore.run();
-    // theDisplay.run();
+    theDisplay.run();
     // theUserInput.run();
     // theSchedule.run();
     // theBoostManager.run();

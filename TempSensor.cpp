@@ -65,6 +65,11 @@ void TempSensor::readTempAndHumidity()
     // again.
     m_lastReadMs = currentTimeMs;
     
+    // Read the sensor. Ignore error -- values will be unchanged on error.
+    int err = readSensor();
+    if (err)
+        m_relHumidity = err;
+
     // Reset port
     pinMode(m_port, INPUT_PULLUP); 
 }
@@ -95,7 +100,7 @@ int TempSensor::readSensor()
 
     // Read 4 bytes
     byte checksum = 0;
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         dhtBytes[i] = readByteFromSensor();
         checksum += dhtBytes[i];
@@ -115,15 +120,15 @@ int TempSensor::readSensor()
     value16 = (dhtBytes[0] << 8) + dhtBytes[1];
     m_relHumidity = value16 * 0.1;
 
-    // Compute 16-bit temperature in tenths of a percent
+    // Compute 16-bit temperature in tenths of a degree C
     value16 = (dhtBytes[2] << 8) + dhtBytes[3];
     
     // Temperature is in signed-magnitude format; if high bit is set
     // value is negative.
     if (value16 & 0x1000)
-        m_temperatureC = -(value16 & 0x7fff) * 0.1;
+        m_temperatureC = -0.1 * (value16 & 0x7fff);
     else
-        m_temperatureC = value16 * 0.1;
+        m_temperatureC = 0.1 * value16;
 #endif // end else DHT22
 
     return 0; // Success
