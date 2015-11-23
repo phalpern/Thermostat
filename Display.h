@@ -13,7 +13,6 @@ class Display
 #if STUB_DISPLAY
     enum { bufferSize = 80 };
     char     m_buffer[bufferSize];  //< output buffer
-    unsigned m_lastTick;
 #endif
 
   public:

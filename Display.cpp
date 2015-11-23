@@ -71,7 +71,6 @@ void Display::initialize()
     strcpy(m_buffer, displayTemplate);
     delay(300);
     Serial.println("Welcome to the Thermostat project!\n");
-    m_lastTick = 0;
     formatTemp(m_buffer + posLowSetting,
                theCurrentSettings.m_tempTargetLow);
     formatTemp(m_buffer + posHighSetting,
