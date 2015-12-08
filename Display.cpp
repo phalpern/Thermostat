@@ -84,7 +84,7 @@ void Display::run()
     bool updated = false;  // Set to true if something changed
 
 #if STUB_DISPLAY
-    unsigned tick = millis();
+    unsigned long tick = millis();
     char tickTock = "/-\\|"[(tick / 1000) % 4];
     if (tickTock != m_buffer[posTickTock]) 
     {
