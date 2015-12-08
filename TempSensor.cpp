@@ -47,7 +47,7 @@ void TempSensor::readTempAndHumidity()
 {
     // Don't read the temperature sensor too often -- it will return
     // bad results and/or damage the sensor
-    uint32_t currentTimeMs = millis();
+    millis_t currentTimeMs = millis();
     if (currentTimeMs < minTimeBetweenReadingsMs)
     {
         // Reading temperature too soon. Wait for minimum time to elapse.
