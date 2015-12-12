@@ -4,6 +4,11 @@
 
 #include <stdio.h>
 
+TraceData::TraceData(const char*   data)
+{
+    strncpy(m_string, data, MaxString); 
+}
+
 struct TraceRecord
 {
     unsigned short         m_repetitions;
@@ -21,15 +26,10 @@ namespace {
     unsigned theTraceLastDumpCount = 1; // Count as of last dump
     unsigned theTraceLastDumpRepetitions = 0; // Repeat count as of last dump
 
-    void TraceDumpRecord(const TraceRecord& record, unsigned startRepetitions)
+    // Parse the message for the first '%' formatting code and determine the
+    // corresponding data type.
+    TraceDataType dataTypeFromMessage(const char* message)
     {
-        int repetitions = record.m_repetitions - startRepetitions;
-        if (0 == repetitions)
-            return;
-
-        printf("%s(%d): ", record.m_descriptor->m_file,
-               record.m_descriptor->m_line);
-        const char* message = record.m_descriptor->m_message;
         const char* formatChar_p = "";
         const char* percent = NULL;
         percent = strchr(message, '%');
@@ -41,22 +41,22 @@ namespace {
 
         switch (formatChar_p[0])
         {
+          case '\0':
+            return TraceTypeNone;
           case 'd':
           case 'i':
             if (formatChar_p[-1] == 'l')
-                printf(message, record.m_data.m_long);
+                return TraceTypeLong;
             else
-                printf(message, record.m_data.m_int);
-            break;
+                return TraceTypeInt;
           case 'u':
           case 'o':
           case 'x':
           case 'X':
             if (formatChar_p[-1] == 'l')
-                printf(message, record.m_data.m_ulong);
+                return TraceTypeUlong;
             else
-                printf(message, record.m_data.m_uint);
-            break;
+                return TraceTypeUint;
           case 'f':
           case 'F':
           case 'e':
@@ -65,28 +65,63 @@ namespace {
           case 'G':
           case 'a':
           case 'A':
-            printf(message, record.m_data.m_double);
-            break;
+            return TraceTypeDouble;
           case 'c':
+            return TraceTypeInt;  // chars are passed as ints
+          case 's':
+            return TraceTypeString;
+          case 'p':
+            return TraceTypePointer;
+          default:
+            return TraceTypeUnknown;
+        }
+    }
+
+    void TraceDumpRecord(const TraceRecord& record, unsigned startRepetitions)
+    {
+        int repetitions = record.m_repetitions - startRepetitions;
+        if (0 == repetitions)
+            return;
+
+        printf("%s(%d): ", record.m_descriptor->m_file,
+               record.m_descriptor->m_line);
+        const char* message = record.m_descriptor->m_message;
+
+        switch (record.m_descriptor->m_type)
+        {
+          case TraceTypeUnknown:
+            printf("%s", message);
+            break;
+          case TraceTypeNone:
+            printf(message);
+            break;
+          case TraceTypeInt:
             printf(message, record.m_data.m_int);
             break;
-          case 's': {
+          case TraceTypeUint:
+            printf(message, record.m_data.m_uint);
+            break;
+          case TraceTypeLong:
+            printf(message, record.m_data.m_long);
+            break;
+          case TraceTypeUlong:
+            printf(message, record.m_data.m_ulong);
+            break;
+          case TraceTypeDouble:
+            printf(message, record.m_data.m_double);
+            break;
+          case TraceTypePointer:
+            printf(message, record.m_data.m_pointer);
+            break;
+          case TraceTypeString: {
               char str[TraceData::MaxString + 1];
               strncpy(str, record.m_data.m_string, TraceData::MaxString);
               str[TraceData::MaxString] = '\0';
               printf(message, str);
             }
             break;
-          case 'p':
-            printf(message, record.m_data.m_pointer);
-            break;
-          case '\0':
-            printf(message);
-            break;
-          default:
-            printf("%s", message);
-            break;
         }
+
         printf("\n");
         if (repetitions > 1)
             printf("     (above repeated %u times)\n", repetitions);
@@ -94,6 +129,7 @@ namespace {
 
 } // End anonymous namespace
 
+extern "C"
 void TraceAddRecord(const TraceDescriptor* desc, TraceData data)
 {
     unsigned index = 0;
@@ -116,6 +152,23 @@ void TraceAddRecord(const TraceDescriptor* desc, TraceData data)
     theTraceRecords[index].m_data = data;
 }
 
+extern "C"
+void TraceAddRecordV(TraceDescriptor* desc, const char* msg, ...)
+{
+    if (desc->m_type == TraceTypeUnknown)
+        desc->m_type = dataTypeFromMessage(msg);
+
+    TraceData data;
+    switch (desc->m_type)
+    {
+        // TBD: populate data based on type here
+      default:
+        break;
+    }
+    TraceAddRecord(desc, data);
+}
+
+extern "C"
 void TraceDump()
 {
     if (0 == theTraceCount)
@@ -141,25 +194,6 @@ void TraceDump()
 
     theTraceLastDumpCount = theTraceCount;
     theTraceLastDumpRepetitions = theTraceRecords[index].m_repetitions;
-}
-
-int main()
-{
-    TRACE("First line");
-    TRACE("This is a float: %5.2f", 3.5);
-    int n = 15;
-    TRACE("%%Starting loop of %ld repetitions", (long) n);
-    TraceDump();
-    for (int i = 0; i < n; ++i)
-    {
-        // TRACE("dual");
-        TRACE("Iteration %d", i);
-    }
-    TRACE("Short string: \"%s\"", "Hello");
-    TRACE("Long string: \"%s\"",
-          "The quick brown fox jumped over the lazy dog");
-    TRACE("100%% done");
-    TraceDump();
 }
 
 /* End Trace.cpp */
